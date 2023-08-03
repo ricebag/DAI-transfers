@@ -1,0 +1,36 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: "${POSTGRES_HOST:-db}"
+      DB_PORT: "${POSTGRES_PORT:-5432}"
+      DB_USER: "${POSTGRES_USER:-admin}"
+      DB_PASSWORD: "${POSTGRES_PASSWORD:-pass}"
+      DB_NAME: "${POSTGRES_DB_NAME:-postgres}"
+      INFURA_API_KEY: "${INFURA_API_KEY}"
+    volumes:
+      - .:/src
+  
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-pass}"
+      POSTGRES_USER: "${POSTGRES_USER:-admin}"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  db:
+    driver: local
